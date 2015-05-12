@@ -1,0 +1,52 @@
+{
+  "name"           : "sails-hook-passport",
+  "version"        : "0.1.0",
+  "description"    : "Implement basic passport strategies, under developpement for now",
+  "main"           : "index.js",
+  "scripts"        : {
+	"postinstall": "node scripts/install.js"
+  },
+  "license"        : "MIT",
+  "dependencies"   : {
+	"async"                 : "^0.9.0",
+	"bcrypt"                : "^0.8.2",
+	"bcryptjs"              : "^2.1.0",
+	"fs-extra"              : "^0.18.3",
+	"jsonwebtoken"          : "^4.2.2",
+	"lodash"                : "^3.6.0",
+	"passport"              : "^0.2.1",
+	"passport-cas"          : "0.0.3",
+	"passport-facebook"     : "^2.0.0",
+	"passport-github"       : "^0.1.5",
+	"passport-google-oauth" : "^0.2.0",
+	"passport-http-bearer"  : "^1.0.1",
+	"passport-local"        : "^1.0.0",
+	"passport-twitter"      : "^1.0.3",
+	"sails-build-dictionary": "^0.10.1",
+	"sails-util"            : "^0.10.4",
+	"sails-util-mvcsloader" : "~0.1.3",
+	"validator"             : "^3.39.0"
+  },
+  "devDependencies": {
+	"sails"     : "~0.11.0",
+	"mocha"     : "^2.2.4",
+	"sails-disk": "^0.10.7"
+  },
+  "repository"     : {
+	"type": "git",
+	"url" : "https://github.com/jaumard/sails-hook-passport.git"
+  },
+  "keywords"       : [
+	"sails",
+	"sails-hook",
+	"passport"
+  ],
+  "author"         : "Aumard Jimmy",
+  "bugs"           : {
+	"url": "https://github.com/jaumard/sails-hook-passport/issues"
+  },
+  "homepage"       : "https://github.com/jaumard/sails-hook-passport",
+  "sails"          : {
+	"isHook": true
+  }
+}
