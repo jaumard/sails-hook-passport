@@ -6,32 +6,32 @@ Install it with npm :
 
     npm install --save sails-hook-passport
 
-Edit your config/http.js file :
+You need to install all strategies you want to use : 
+    npm install --save passport-local passport-twitter passport-facebook
 
-    middleware: {
+###WARNING 
+Don't install passport on your sails projet or hook will not working anymore
 
-        passportInit    : require('passport').initialize(),
-        passportSession : require('passport').session(),
-    
-        order: [
-          'startRequestTimer',
-          'cookieParser',
-          'session',
-          'passportInit',
-          'passportSession',
-          'myRequestLogger',
-          'bodyParser',
-          'handleBodyParserError',
-          'compress',
-          'methodOverride',
-          'poweredBy',
-          'router',
-          'www',
-          'favicon',
-          '404',
-          '500'
-        ]
-    }
+Basic user models embedded is : 
+    var User = {
+      schema : true,
+      attributes : {
+          username  : {
+              type   : 'string',
+              unique : true
+          },
+          email     : {
+              type   : 'email',
+              unique : true
+          },
+          passports : {
+              collection : 'Passport',
+              via        : 'user'
+          }
+      }
+    };
+
+###You can override it by creating a User.js under your api/models folder.
   
 Enable passport strategies on config/passport.js file :
     
@@ -39,11 +39,7 @@ Enable passport strategies on config/passport.js file :
       local: {
         strategy: require('passport-local').Strategy
       },
-    
-      bearer: {
-        strategy: require('passport-http-bearer').Strategy
-      },
-    
+
       twitter: {
         name: 'Twitter',
         protocol: 'oauth',
@@ -82,17 +78,6 @@ Enable passport strategies on config/passport.js file :
         options: {
           clientID: 'your-client-id',
           clientSecret: 'your-client-secret'
-        }
-      },
-    
-      cas: {
-        name: 'CAS',
-        protocol: 'cas',
-        strategy: require('passport-cas').Strategy,
-        options: {
-          ssoBaseURL: 'http://your-cas-url',
-          serverBaseURL: 'http://localhost:1337',
-          serviceURL: 'http://localhost:1337/auth/cas/callback'
         }
       }
     };

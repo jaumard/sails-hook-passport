@@ -1,6 +1,6 @@
 {
   "name"           : "sails-hook-passport",
-  "version"        : "0.1.0",
+  "version": "0.1.1",
   "description"    : "Implement basic passport strategies, under developpement for now",
   "main"           : "index.js",
   "scripts"        : {

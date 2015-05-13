@@ -1,5 +1,14 @@
 module.exports = function (sails)
 {
+	//Override http config here before hook initialisation
+	sails.config.http.middleware = {
+
+		passportInit    : require('passport').initialize(),
+		passportSession : require('passport').session(),
+
+		order : ['startRequestTimer', 'cookieParser', 'session', 'passportInit', 'passportSession', 'myRequestLogger', 'bodyParser', 'handleBodyParserError', 'compress', 'methodOverride', 'poweredBy', 'router', 'www', 'favicon', '404', '500']
+	};
+
 	var hookLoader = require('sails-util-mvcsloader')(sails);
 	hookLoader.injectPolicies(__dirname + '/api/policies');
 

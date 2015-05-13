@@ -18,3 +18,18 @@ if (!fs.existsSync(appDir + "/../../config/passport.js"))
 		}
 	});
 }
+if (!fs.existsSync(appDir + "/../../views/auth"))
+{
+	//Copy base acl config
+	fs.copy(appDir + "/templates/auth", appDir + "/../../views/auth", function (err)
+	{
+		if (err)
+		{
+			console.log(err);
+		}
+		else
+		{
+			console.log("done write auth base views");
+		}
+	});
+}
