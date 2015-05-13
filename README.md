@@ -99,5 +99,6 @@ Enable passport strategies on config/passport.js file :
         }
       }
     };
-  ###WARNING 
+  
+###WARNING 
 Don't install passport on your sails projet or hook will not working anymore
