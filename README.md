@@ -54,51 +54,50 @@ Add translation on your config/locales/...
 Enable passport strategies on config/passport.js file :
     
     module.exports.passport = {
-      local: {
-        strategy: require('passport-local').Strategy
-      },
-
-      twitter: {
-        name: 'Twitter',
-        protocol: 'oauth',
-        strategy: require('passport-twitter').Strategy,
-        options: {
-          consumerKey: 'your-consumer-key',
-          consumerSecret: 'your-consumer-secret'
-        }
-      },
-    
-      github: {
-        name: 'GitHub',
-        protocol: 'oauth2',
-        strategy: require('passport-github').Strategy,
-        options: {
-          clientID: 'your-client-id',
-          clientSecret: 'your-client-secret'
-        }
-      },
-    
-      facebook: {
-        name: 'Facebook',
-        protocol: 'oauth2',
-        strategy: require('passport-facebook').Strategy,
-        options: {
-          clientID: 'your-client-id',
-          clientSecret: 'your-client-secret',
-          scope: ['email'] /* email is necessary for login behavior */
-        }
-      },
-    
-      google: {
-        name: 'Google',
-        protocol: 'oauth2',
-        strategy: require('passport-google-oauth').OAuth2Strategy,
-        options: {
-          clientID: 'your-client-id',
-          clientSecret: 'your-client-secret'
-        }
-      }
+      redirect : {
+      		login 		: "/",//Login successful
+      		logout		: "/"//Logout successful
+      	},
+      
+      	strategies : {
+      		local : {
+      			strategy : require('passport-local').Strategy
+      		},
+      
+      		twitter : {
+      			name     : 'Twitter',
+      			protocol : 'oauth',
+      			strategy : require('passport-twitter').Strategy,
+      			options  : {
+      				consumerKey    : 'your-consumer-key',
+      				consumerSecret : 'your-consumer-secret'
+      			}
+      		},
+      
+      		facebook : {
+      			name     : 'Facebook',
+      			protocol : 'oauth2',
+      			strategy : require('passport-facebook').Strategy,
+      			options  : {
+      				clientID     : 'your-client-id',
+      				clientSecret : 'your-client-secret',
+      				scope        : ['email'] /* email is necessary for login behavior */
+      			}
+      		},
+      
+      		google : {
+      			name     : 'Google',
+      			protocol : 'oauth2',
+      			strategy : require('passport-google-oauth').OAuth2Strategy,
+      			options  : {
+      				clientID     : 'your-client-id',
+      				clientSecret : 'your-client-secret'
+      			}
+      		}
+      	}
     };
-  
+
+You can log and register on /login and /register routes.
+
 ###WARNING 
 Don't install passport on your sails projet or hook will not working anymore. If you really need passport on your sails project remove passport from sails-hook-passport module

@@ -32,7 +32,7 @@ var AuthController = {
 	 */
 	login : function (req, res)
 	{
-		var strategies = sails.config.passport, providers = {};
+		var strategies = sails.config.passport.strategies, providers = {};
 
 		// Get a list of available providers for use in your templates.
 		Object.keys(strategies).forEach(function (key)
@@ -76,7 +76,7 @@ var AuthController = {
 		// mark the user as logged out for auth purposes
 		req.session.authenticated = false;
 
-		res.redirect('/');
+		res.redirect(sails.config.passport.redirect.logout);
 	},
 
 	/**
@@ -181,11 +181,11 @@ var AuthController = {
 				}
 
 				// Mark the session as authenticated to work with default Sails sessionAuth.js policy
-				req.session.authenticated = true
+				req.session.authenticated = true;
 
 				// Upon successful login, send the user to the homepage were req.user
 				// will be available.
-				res.redirect('/');
+				res.redirect(sails.config.passport.redirect.login);
 			});
 		});
 	},

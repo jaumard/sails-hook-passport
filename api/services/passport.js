@@ -213,7 +213,7 @@ passport.connect = function (req, query, profile, next)
  */
 passport.endpoint = function (req, res)
 {
-	var strategies = sails.config.passport, provider = req.param('provider'), options = {};
+	var strategies = sails.config.passport.strategies, provider = req.param('provider'), options = {};
 
 	// If a provider doesn't exist for this endpoint, send the user back to the
 	// login page
@@ -310,7 +310,7 @@ passport.callback = function (req, res, next)
  */
 passport.loadStrategies = function ()
 {
-	var self = this, strategies = sails.config.passport;
+	var self = this, strategies = sails.config.passport.strategies;
 
 	Object.keys(strategies).forEach(function (key)
 	{
