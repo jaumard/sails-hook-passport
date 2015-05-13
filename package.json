@@ -1,7 +1,7 @@
 {
   "name"           : "sails-hook-passport",
-  "version": "0.1.1",
-  "description"    : "Implement basic passport strategies, under developpement for now",
+  "version"        : "0.1.2",
+  "description"    : "Implement basic Passport.js strategies, under developpement for now",
   "main"           : "index.js",
   "scripts"        : {
 	"postinstall": "node scripts/install.js"
@@ -24,7 +24,7 @@
 	"passport-twitter"      : "^1.0.3",
 	"sails-build-dictionary": "^0.10.1",
 	"sails-util"            : "^0.10.4",
-	"sails-util-mvcsloader" : "~0.1.3",
+	"sails-util-mvcsloader": "~0.1.5",
 	"validator"             : "^3.39.0"
   },
   "devDependencies": {
@@ -39,7 +39,11 @@
   "keywords"       : [
 	"sails",
 	"sails-hook",
-	"passport"
+	"authentication",
+	"auth",
+	"passport",
+	"facebook",
+	"twitter"
   ],
   "author"         : "Aumard Jimmy",
   "bugs"           : {
