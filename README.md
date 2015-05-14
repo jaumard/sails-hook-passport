@@ -12,7 +12,7 @@ You need to install all strategies you want to use :
     npm install --save passport-local passport-twitter passport-facebook
 
 ##CONFIGURE
-Basic user models embedded is : 
+Basic embedded user models is (you don't need to create it) : 
 
 ```
 var User = 
@@ -34,8 +34,21 @@ var User =
   }
 };
 ```
-###You can override it by creating a User.js under your api/models folder.
-  
+You can override this model by creating a User.js under your api/models folder and add more attributes and callbacks.
+
+By default password have to be >= 8 characters, you can also override it by creating a Passport.js under api/models like this :
+
+
+    module.exports = {
+    
+      attributes : {
+        password : {
+          type      : 'string',
+          minLength : 6
+        }
+      }
+    };
+
 Add translation on your config/locales/...
 
     {
@@ -54,11 +67,15 @@ Add translation on your config/locales/...
 Enable passport strategies on config/passport.js file :
     
     module.exports.passport = {
-      redirect : {
+        redirect : 
+        {
       		login 		: "/",//Login successful
       		logout		: "/"//Logout successful
       	},
-      
+        onUserCreated : function (user, providerInfos)//providerInfos is infos from twitter/facebook... 
+      	{
+      		//Send email for example
+      	},
       	strategies : {
       		local : {
       			strategy : require('passport-local').Strategy

@@ -45,10 +45,7 @@ exports.register = function (req, res, next)
 		return next(new Error('No password was entered.'));
 	}
 
-	User.create({
-		username : username,
-		email    : email
-	}, function (err, user)
+	User.create(req.allParams(), function (err, user)
 	{
 		if (err)
 		{
@@ -89,7 +86,12 @@ exports.register = function (req, res, next)
 					next(destroyErr || err);
 				});
 			}
-
+			if (sails.config.passport.onUserCreated)
+			{
+				sails.config.passport.onUserCreated(user, {
+					protocol : 'local'
+				});
+			}
 			next(null, user);
 		});
 	});

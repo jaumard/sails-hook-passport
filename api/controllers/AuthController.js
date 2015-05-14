@@ -76,7 +76,14 @@ var AuthController = {
 		// mark the user as logged out for auth purposes
 		req.session.authenticated = false;
 
-		res.redirect(sails.config.passport.redirect.logout);
+		if (req.wantsJSON)
+		{
+			res.json({redirect : sails.config.passport.redirect.logout});
+		}
+		else
+		{
+			res.redirect(sails.config.passport.redirect.logout);
+		}
 	},
 
 	/**
@@ -153,16 +160,35 @@ var AuthController = {
 			// These views should take care of rendering the error messages.
 			var action = req.param('action');
 
-			switch (action)
+			if (req.wantsJSON)
 			{
-				case 'register':
-					res.redirect('/register');
-					break;
-				case 'disconnect':
-					res.redirect('back');
-					break;
-				default:
-					res.redirect('/login');
+				var json = {action : action};
+				switch (action)
+				{
+					case 'register':
+						json["redirect"] = '/register';
+						break;
+					case 'disconnect':
+						json["redirect"] = 'back';
+						break;
+					default:
+						json["redirect"] = '/login';
+				}
+				res.json(json);
+			}
+			else
+			{
+				switch (action)
+				{
+					case 'register':
+						res.redirect('/register');
+						break;
+					case 'disconnect':
+						res.redirect('back');
+						break;
+					default:
+						res.redirect('/login');
+				}
 			}
 		}
 
@@ -185,7 +211,14 @@ var AuthController = {
 
 				// Upon successful login, send the user to the homepage were req.user
 				// will be available.
-				res.redirect(sails.config.passport.redirect.login);
+				if (req.wantsJSON)
+				{
+					res.json({redirect : sails.config.passport.redirect.login});
+				}
+				else
+				{
+					res.redirect(sails.config.passport.redirect.login);
+				}
 			});
 		});
 	},

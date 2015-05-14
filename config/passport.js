@@ -15,10 +15,13 @@
  */
 
 module.exports.passport = {
-	redirect : {
+	redirect      : {
 		login  : "/",//Login successful
 		logout : "/"//Logout successful
 	},
-
-	strategies : {}
+	onUserCreated : function (user, providerInfos)
+	{
+		//Send email for example
+	},
+	strategies    : {}
 };
