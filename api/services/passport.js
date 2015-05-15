@@ -145,7 +145,7 @@ passport.connect = function (req, query, profile, next)
 						}
 						if (sails.config.passport.onUserCreated)
 						{
-							sails.config.passport.onUserCreated(user, provider);
+							sails.config.passport.onUserCreated(user, profile);
 						}
 						next(err, user);
 					});

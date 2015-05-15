@@ -89,7 +89,7 @@ exports.register = function (req, res, next)
 			if (sails.config.passport.onUserCreated)
 			{
 				sails.config.passport.onUserCreated(user, {
-					protocol : 'local'
+					provider : 'local'
 				});
 			}
 			next(null, user);
