@@ -23,5 +23,9 @@ module.exports.passport = {
 	{
 		//Send email for example
 	},
+	onUserLogged : function (user)
+	{
+		//Set user infos in session for example
+	},
 	strategies    : {}
 };

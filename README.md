@@ -76,6 +76,10 @@ Enable passport strategies on config/passport.js file :
       	{
       		//Send email for example
       	},
+      	onUserLogged  : function (user)
+        {
+            //Set user infos in session for example
+        },
       	strategies : {
       		local : {
       			strategy : require('passport-local').Strategy
