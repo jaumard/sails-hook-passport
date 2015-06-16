@@ -210,7 +210,7 @@ var AuthController = {
 				req.session.authenticated = true;
 				if (sails.config.passport.onUserLogged)
 				{
-					sails.config.passport.onUserLogged(user)
+					sails.config.passport.onUserLogged(req.session, user)
 				}
 
 				// Upon successful login, send the user to the homepage were req.user

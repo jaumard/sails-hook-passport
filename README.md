@@ -76,7 +76,7 @@ Enable passport strategies on config/passport.js file :
       	{
       		//Send email for example
       	},
-      	onUserLogged  : function (user)
+      	onUserLogged  : function (session, user)
         {
             //Set user infos in session for example
         },
