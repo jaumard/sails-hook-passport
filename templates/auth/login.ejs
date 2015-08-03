@@ -1,6 +1,11 @@
-<% if (errors) { %>
+<% if (typeof errors != "undefined") { %>
 <% errors.forEach(function (error) { %>
 <%= __(error) %>
+<% }) %>
+<% } %>
+<% if (typeof messages != "undefined") { %>
+<% messages.forEach(function (message) { %>
+<%= __(message) %>
 <% }) %>
 <% } %>
 
@@ -10,7 +15,7 @@
     <button type="submit">Sign in</button>
 </form>
 
-<% if (Object.keys(providers).length) { %>
+<% if (typeof providers != "undefined" && Object.keys(providers).length) { %>
 <h4>You can also use one of these...</h4>
 
 <% Object.keys(providers).forEach(function (key) { %>

@@ -15,12 +15,31 @@
  */
 
 module.exports.passport = {
-	redirect : {
+	redirect                   : {
 		login  : "/",//Login successful
 		logout : "/"//Logout successful
 	},
-
-	strategies : {
+	layout                     : "layout", //Specify the layout file for auth views
+	passwordResetTokenValidity : 86400000,
+	onUserCreated              : function (user, providerInfos)
+	{
+		//Send email for example
+	},
+	onUserLogged               : function (session, user)
+	{
+		//Set user infos in session for example
+	},
+	onUserAskNewPassword       : function (req, userData, callback)
+	{
+		//You can here send an email, an example of email template is available under /views/auth/emails
+		//var protocol  = req.connection.encrypted ? 'https' : 'http';
+		//var baseUrl   = protocol + '://' + req.headers.host + '/';
+		//Use your favorite email sender :)
+		//don't forget to call the callback with optional error parameter
+		//URL to call : resetPassword?email=<%=user.email%>&token=user.mdpToken
+		callback();
+	},
+	strategies                 : {
 		local : {
 			strategy : require('passport-local').Strategy
 		},

@@ -3,15 +3,17 @@ var User = {
 	schema : true,
 
 	attributes : {
-		username  : {
+		mdpToken          : 'string',
+		mdpTokenTimestamp : 'datetime',
+		username          : {
 			type   : 'string',
 			unique : true
 		},
-		email     : {
+		email             : {
 			type   : 'email',
 			unique : true
 		},
-		passports : {
+		passports         : {
 			collection : 'Passport',
 			via        : 'user'
 		}

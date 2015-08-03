@@ -62,7 +62,11 @@ Add translation on your config/locales/...
         "Error.Passport.Email.Exists": "This email already exists. So try logging in.",
         "Error.Passport.Username.Missing": "You need to supply a username",
         "Error.Passport.Password.Missing": "Oh no, you haven't set a password yet!",
-        "Error.Passport.Generic": "Snap. Something went wrong with authorization."
+        "Error.Passport.Generic": "Snap. Something went wrong with authorization.",
+        "Error.ResetPassword" : "An error as occurred, please restart the procedure",
+        "Error.ResetPassword.Token" : "This link is no more valid, please restart the procedure",
+        "Success.ResetPassword" : "Your password is changed successfully",
+        "Email.Sent" : "An email was sent to change your password"
     }
 Enable passport strategies on config/passport.js file :
     
@@ -72,6 +76,8 @@ Enable passport strategies on config/passport.js file :
       		login 		: "/",//Login successful
       		logout		: "/"//Logout successful
       	},
+      	layout : "layout", //Specify the layout file for auth views
+      	passwordResetTokenValidity : 86400000, //Link to reset password is good the next 24h after asking
         onUserCreated : function (user, providerInfos)//providerInfos is infos from twitter/facebook... 
       	{
       		//Send email for example
@@ -79,6 +85,16 @@ Enable passport strategies on config/passport.js file :
       	onUserLogged  : function (session, user)
         {
             //Set user infos in session for example
+        },
+        onUserAskNewPassword : function (req, userData, callback)
+        {
+            //You can here send an email, an example of email template is available under /views/auth/emails
+            //var protocol  = req.connection.encrypted ? 'https' : 'http';
+            //var baseUrl   = protocol + '://' + req.headers.host + '/';
+            //Use your favorite email sender :)
+            //don't forget to call the callback with optional error parameter
+            //URL to call : resetPassword?email=<%=user.email%>&token=user.mdpToken
+     		callback();
         },
       	strategies : {
       		local : {

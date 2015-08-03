@@ -32,27 +32,37 @@ var AuthController = {
 	 */
 	login : function (req, res)
 	{
-		var strategies = sails.config.passport.strategies, providers = {};
 
-		// Get a list of available providers for use in your templates.
-		Object.keys(strategies).forEach(function (key)
+		if (req.session.authenticated)
 		{
-			if (key === 'local' || key === 'bearer')
+			res.redirect(req._sails.config.passport.redirect.login);
+		}
+		else
+		{
+			var strategies = req._sails.config.passport.strategies, providers = {};
+
+			// Get a list of available providers for use in your templates.
+			Object.keys(strategies).forEach(function (key)
 			{
-				return;
-			}
+				if (key === 'local' || key === 'bearer')
+				{
+					return;
+				}
 
-			providers[key] = {
-				name : strategies[key].name,
-				slug : key
-			};
-		});
+				providers[key] = {
+					name : strategies[key].name,
+					slug : key
+				};
+			});
 
-		// Render the `auth/login.ext` view
-		res.view({
-			providers : providers,
-			errors    : req.flash('error')
-		});
+			// Render the `auth/login.ext` view
+			res.view({
+				layout    : req._sails.config.passport.layout,
+				providers : providers,
+				errors    : req.flash('error'),
+				messages  : req.flash('message')
+			});
+		}
 	},
 
 	/**
@@ -78,11 +88,11 @@ var AuthController = {
 
 		if (req.wantsJSON)
 		{
-			res.json({redirect : sails.config.passport.redirect.logout});
+			res.json({redirect : req._sails.config.passport.redirect.logout});
 		}
 		else
 		{
-			res.redirect(sails.config.passport.redirect.logout);
+			res.redirect(req._sails.config.passport.redirect.logout);
 		}
 	},
 
@@ -104,6 +114,7 @@ var AuthController = {
 	register : function (req, res)
 	{
 		res.view({
+			layout : req._sails.config.passport.layout,
 			errors : req.flash('error')
 		});
 	},
@@ -116,7 +127,7 @@ var AuthController = {
 	 */
 	provider : function (req, res)
 	{
-		passport.endpoint(req, res);
+		req._sails.services.passport.endpoint(req, res);
 	},
 
 	/**
@@ -152,6 +163,10 @@ var AuthController = {
 			else if (flashError)
 			{
 				req.flash('error', flashError);
+			}
+			if (req.body.password)
+			{
+				delete req.body.password;//We don't re populate password
 			}
 			req.flash('form', req.body);
 
@@ -192,7 +207,7 @@ var AuthController = {
 			}
 		}
 
-		passport.callback(req, res, function (err, user, challenges, statuses)
+		req._sails.services.passport.callback(req, res, function (err, user, challenges, statuses)
 		{
 			if (err || !user)
 			{
@@ -208,20 +223,20 @@ var AuthController = {
 
 				// Mark the session as authenticated to work with default Sails sessionAuth.js policy
 				req.session.authenticated = true;
-				if (sails.config.passport.onUserLogged)
+				if (req._sails.config.passport.onUserLogged)
 				{
-					sails.config.passport.onUserLogged(req.session, user)
+					req._sails.config.passport.onUserLogged(req.session, user)
 				}
 
 				// Upon successful login, send the user to the homepage were req.user
 				// will be available.
 				if (req.wantsJSON)
 				{
-					res.json({redirect : sails.config.passport.redirect.login});
+					res.json({redirect : req._sails.config.passport.redirect.login});
 				}
 				else
 				{
-					res.redirect(sails.config.passport.redirect.login);
+					res.redirect(req._sails.config.passport.redirect.login);
 				}
 			});
 		});
@@ -233,9 +248,235 @@ var AuthController = {
 	 * @param {Object} req
 	 * @param {Object} res
 	 */
-	disconnect : function (req, res)
+	disconnect     : function (req, res)
 	{
-		passport.disconnect(req, res);
+		req._sails.services.passport.disconnect(req, res);
+	},
+	/**
+	 * `AuthController.password()`
+	 * Show page for set email account to reseting
+	 */
+	password       : function (req, res)
+	{
+		var email = req.param("email");
+		res.view({
+			layout : req._sails.config.passport.layout,
+			email  : email,
+			errors : req.flash('error')
+		});
+
+	},
+	/**
+	 * `AuthController.resetPassword()`
+	 * Show page for reseting password
+	 */
+	resetPassword  : function (req, res)
+	{
+		var email = req.param("email");
+		var token = req.param("token");
+
+		res.view("auth/changePassword", {
+			layout : req._sails.config.passport.layout,
+			email  : email,
+			token  : token
+		});
+
+	},
+	/**
+	 * `AuthController.changePassword()`
+	 * Receive form informations for password reseting
+	 */
+	changePassword : function (req, res)
+	{
+		var email = req.param("email");
+		var token = req.param("token");
+
+		if (token)
+		{
+			req._sails.models.user.findOneByEmail(email).populate("passports").exec(function (err, user)
+			{
+				if (err)
+				{
+					req._sails.log.error(err);
+					res.serverError();
+				}
+				else if (!user)
+				{
+					req.flash("error", "Error.Passport.Email.NotFound");
+					res.redirect("/login");
+
+				}
+				else
+				{
+					if (token == user.mdpToken)
+					{
+						var date  = user.mdpTokenTimestamp.getTime();
+						var now   = new Date().getTime();
+						var limit = req._sails.config.passport.passwordResetTokenValidity || 86400000;//More than 24h token is invalid
+
+						if (now - date >= limit)//More than 24h token is invalid
+						{
+							req.flash("error", "Error.ResetPassword.Token");
+							res.redirect("/login");
+						}
+						else
+						{
+							var localPassport;
+							for (var i = 0; i < user.passports.length; i++)
+							{
+								if (user.passports[i].protocol == "local")
+								{
+									localPassport = user.passports[i];
+									break;
+								}
+							}
+							if (localPassport)
+							{
+								req._sails.models.passport.update(localPassport.id, {password : req.param("password")}).exec(function (err, results)
+								{
+									if (err)
+									{
+										if (err.code == "E_VALIDATION")
+										{
+											res.view({
+												layout : req._sails.config.passport.layout,
+												errors : ["Error.Passport.Password.Missing"]
+											});
+										}
+										else
+										{
+											req._sails.log.error(err);
+											res.serverError();
+										}
+
+									}
+									else
+									{
+										req.flash("message", "Success.ResetPassword");
+										res.redirect("/login");
+
+									}
+								});
+
+							}
+							else
+							{
+								req._sails.log.error(err);
+								res.serverError();
+							}
+
+						}
+
+					}
+					else
+					{
+						req.flash("error", "Error.ResetPassword");
+						res.redirect("/login");
+
+					}
+
+				}
+			});
+		}
+		else
+		{
+			req.flash("error", "Error.ResetPassword");
+			res.redirect("/login");
+		}
+	},
+	/**
+	 * `AuthController.sendEmailMdp()`
+	 * Send email for reseting password
+	 */
+	sendEmailMdp   : function (req, res)
+	{
+		var email = req.param("email");
+		var error;
+
+		if (email)
+		{
+			req._sails.models.user.findOneByEmail(email).populate("passports").exec(function (err, user)
+			{
+				if (err)
+				{
+					if (err.code == "E_VALIDATION")
+					{
+						res.view("auth/password", {
+							layout : req._sails.config.passport.layout,
+							errors : ["Error.Passport.Email.NotFound"]
+						});
+					}
+					else
+					{
+						req._sails.log.error(err);
+						res.serverError();
+					}
+				}
+				else if (!user)
+				{
+					res.view("auth/login", {
+						layout : req._sails.config.passport.layout,
+						errors : ["Error.Passport.Email.NotFound"]
+					});
+				}
+				else
+				{
+					var crypto = require('crypto');
+					// Generating accessToken for API authentication
+					var token              = crypto.randomBytes(48).toString('base64').replace("+", "");
+					user.mdpToken          = token;
+					user.mdpTokenTimestamp = new Date();
+
+					req._sails.models.user.update(user.id, {
+						mdpToken          : token,
+						mdpTokenTimestamp : new Date()
+					}).exec(function (err, results)
+					{
+						if (err)
+						{
+							req._sails.log.error(err);
+							res.serverError();
+						}
+						else
+						{
+							user.mdpToken = encodeURIComponent(user.mdpToken);
+
+							if (req._sails.config.passport.onUserAskNewPassword)
+							{
+								req._sails.config.passport.onUserAskNewPassword(req, user, function (err)
+								{
+									if (err)
+									{
+										req._sails.log.error(err);
+										res.serverError();
+									}
+									else
+									{
+										req.flash("message", "Email.Sent");
+										res.redirect("/login");
+									}
+								});
+							}
+							else
+							{
+								req._sails.log.error("sails.config.passport.onUserAskNewPassword need to be set for reseting user password!");
+								res.serverError();
+							}
+
+						}
+					});
+				}
+			});
+		}
+		else
+		{
+			error = ['Error.Email'];
+			res.view("auth/password", {
+				email  : email,
+				layout : req._sails.config.passport.layout,
+				errors : error
+			});
+		}
 	}
 };
 

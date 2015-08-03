@@ -12,5 +12,10 @@ module.exports.routes = {
 
 	'get /auth/:provider'          : 'AuthController.provider',
 	'get /auth/:provider/callback' : 'AuthController.callback',
-	'get /auth/:provider/:action'  : 'AuthController.callback'
+	'get /auth/:provider/:action' : 'AuthController.callback',
+
+	'get /password'        : 'AuthController.password',
+	'post /password'       : 'AuthController.sendEmailMdp',
+	'get /resetPassword'   : 'AuthController.resetPassword',
+	'post /changePassword' : 'AuthController.changePassword'
 };
