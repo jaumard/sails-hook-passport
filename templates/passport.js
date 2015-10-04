@@ -21,6 +21,7 @@ module.exports.passport = {
 	},
 	layout                     : "layout", //Specify the layout file for auth views
 	passwordResetTokenValidity : 86400000,
+	localAuthMethod : "both",//username or email
 	onUserCreated              : function (user, providerInfos)
 	{
 		//Send email for example

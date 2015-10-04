@@ -232,7 +232,10 @@ var AuthController = {
 				// will be available.
 				if (req.wantsJSON)
 				{
-					res.json({redirect : req._sails.config.passport.redirect.login});
+					res.json({
+						redirect : req._sails.config.passport.redirect.login,
+						user     : user
+					});
 				}
 				else
 				{
