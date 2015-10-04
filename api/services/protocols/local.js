@@ -156,6 +156,23 @@ exports.login = function (req, identifier, password, next)
 {
 	var isEmail = validator.isEmail(identifier), query = {};
 
+	if (!req._sails.config.passport.localAuthMethod)
+	{
+		req._sails.config.passport.localAuthMethod = "both";
+	}
+
+	if (!isEmail && req._sails.config.passport.localAuthMethod == "email")
+	{
+		req.flash('error', 'Error.Passport.Email.NotFound');
+		return next(null, false);
+	}
+
+	if (isEmail && req._sails.config.passport.localAuthMethod == "username")
+	{
+		req.flash('error', 'Error.Passport.Username.NotFound');
+		return next(null, false);
+	}
+
 	if (isEmail)
 	{
 		query.email = identifier;

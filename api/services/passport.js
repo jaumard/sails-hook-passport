@@ -77,18 +77,15 @@ passport.connect = function (req, query, profile, next)
 	{
 		return next(new Error('No authentication provider was identified.'));
 	}
-	if (!req._sails.config.passport.localAuthMethod)
-	{
-		req._sails.config.passport.localAuthMethod = "both";
-	}
+
 	// If the profile object contains a list of emails, grab the first one and
 	// add it to the user.
-	if (profile.hasOwnProperty('emails') && (req._sails.config.passport.localAuthMethod == "both" || req._sails.config.passport.localAuthMethod == "email"))
+	if (profile.hasOwnProperty('emails'))
 	{
 		user.email = profile.emails[0].value;
 	}
 	// If the profile object contains a username, add it to the user.
-	if (profile.hasOwnProperty('username') && (req._sails.config.passport.localAuthMethod == "both" || req._sails.config.passport.localAuthMethod == "username"))
+	if (profile.hasOwnProperty('username'))
 	{
 		user.username = profile.username;
 	}
