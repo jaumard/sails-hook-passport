@@ -155,14 +155,20 @@ var AuthController = {
 			// because we shouldn't expose internal authorization errors to the user.
 			// We do return a generic error and the original request body.
 			var flashError = req.flash('error')[0];
+			var action = req.param('action');
+			var json   = {action : action};
 
+			var status = 500;
 			if (err && !flashError)
 			{
 				req.flash('error', 'Error.Passport.Generic');
+				json["error"] = req.__("Error.Passport.Generic");
 			}
 			else if (flashError)
 			{
 				req.flash('error', flashError);
+				json["error"] = req.__(flashError);
+				status        = 400;
 			}
 			if (req.body.password)
 			{
@@ -173,11 +179,9 @@ var AuthController = {
 			// If an error was thrown, redirect the user to the
 			// login, register or disconnect action initiator view.
 			// These views should take care of rendering the error messages.
-			var action = req.param('action');
 
 			if (req.wantsJSON)
 			{
-				var json = {action : action};
 				switch (action)
 				{
 					case 'register':
@@ -189,7 +193,7 @@ var AuthController = {
 					default:
 						json["redirect"] = '/login';
 				}
-				res.json(json);
+				res.status(status).json(json);
 			}
 			else
 			{
