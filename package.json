@@ -1,6 +1,6 @@
 {
   "name"           : "sails-hook-passport",
-  "version"        : "0.3.2",
+  "version"        : "0.3.3",
   "description"    : "Implement basic Passport.js authentification strategies",
   "main"           : "index.js",
   "scripts"        : {

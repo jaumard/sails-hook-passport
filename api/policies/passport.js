@@ -21,6 +21,9 @@
  * @param {Object}   res
  * @param {Function} next
  */
+var http    = require('http');
+var methods = ['login', 'logIn', 'logout', 'logOut', 'isAuthenticated', 'isUnauthenticated'];
+
 module.exports = function (req, res, next)
 {
 	// Initialize Passport
@@ -31,7 +34,13 @@ module.exports = function (req, res, next)
 		{
 			// Make the user available throughout the frontend
 			res.locals.user = req.user;
-
+			if (req.isSocket)
+			{
+				for (var i = 0; i < methods.length; i++)
+				{
+					req[methods[i]] = http.IncomingMessage.prototype[methods[i]].bind(req);
+				}
+			}
 			next();
 		});
 	});
