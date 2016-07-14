@@ -170,9 +170,13 @@ var AuthController = {
 				json["error"] = req.__(flashError);
 				status        = 400;
 			}
-			if (req.body.password)
+
+			if ('body' in req)
 			{
-				delete req.body.password;//We don't re populate password
+				if (req.body.password)
+				{
+					delete req.body.password; //We don't repopulate password
+				}
 			}
 			req.flash('form', req.body);
 
