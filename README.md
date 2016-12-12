@@ -1,6 +1,6 @@
 # sails-hook-passport
 
-**DEPRECATED : NOT MAINTENED ANYMORE** I'm using Trails now, if you want access to this repo to contribute and maintain it, please let me know
+**DEPRECATED : NOT MAINTAINED ANYMORE** I'm using Trails now, if you want access to this repo to contribute and maintain it, please let me know.
 
 Implement passport.js strategies to log your users with twitter, facebook, google and more...
 
